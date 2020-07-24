@@ -1,0 +1,42 @@
+
+.sortby {
+	color: white;
+	ul {
+		padding-inline-start: 0;
+		
+		li {
+			@include transition(all 0.2s ease);
+			display: inline-block;
+			text-transform: uppercase;
+			cursor: pointer;
+			margin: 0 5px;
+			padding: 10px 20px;
+
+			&.active {
+				color: $light_red;
+			}
+
+			&:hover {
+				@include transform(scale(1.1));
+			}
+		}
+	}
+}
+
+.patreon {
+	margin-bottom: 2em;
+	.supporters {
+		h4 {
+			color: $blue_highlight;
+			text-align: center;
+			display: inline-block;
+			padding-right: 10px;
+		}
+		p {
+			// font-weight: bold;
+			color: white;
+			display: inline-block;
+			text-align: center;
+		}
+	}
+}

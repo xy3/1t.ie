@@ -1,0 +1,86 @@
+.request-info {
+	border-radius: 5px;
+	background: $bg-light;
+	text-align: center;
+	padding: 1em;
+	margin: 0 5%;
+	@include flex();
+
+	&.search {
+		padding-top: 0;
+		border-radius: 0 0 5px 5px;
+		margin-top: -5px;
+	}
+	
+	&>div {
+		border-radius: 5px;
+		flex: 1;
+		margin: 10px;
+		padding: 1em 2em;
+		background: $bg-dark;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	.request-search {
+		margin-top: 0;
+		.form-group {
+			@include flex();
+			#search-query {
+				margin-right: 5px;
+				flex: 3;
+			}
+			#search-year {
+				margin-left: 5px;	
+				flex: 1;
+			}
+		}
+		input {
+			font-size: 1.3em;
+			height: auto;
+			width: 100%;
+		}
+		button {
+			font-size: 1.3em;
+			height: auto;
+		}
+	}
+
+	span {
+		font-size: 1.2em;
+		&.Good {color: #43E4BC; }
+		&.Bad {color: #FF3552; }
+	}
+
+}
+
+button {
+	&.requested {
+		background-color: #50AB1F;
+		border: 2px solid #396F00;
+		&:hover {
+			background-color: #50AB1F;
+			border: 2px solid #396F00;
+		}
+	}
+	&.requested-alt {
+		background-color: #1F96AB;
+		border: 2px solid #0A7C90;
+		&:hover {
+			background-color: #1F96AB;
+			border: 2px solid #0A7C90;
+		}	
+	}
+}
+
+
+.spacer {
+	&.px100 {height: 100px;}
+	&.px200 {height: 200px;}
+	&.px300 {height: 300px;}
+	&.px400 {height: 400px;}
+	&.px500 {height: 500px;}
+}
+
+
+

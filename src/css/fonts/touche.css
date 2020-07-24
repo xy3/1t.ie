@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'Touche';
+    src: url('Touche-Regular.woff2') format('woff2'),
+        url('Touche-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Touche';
+    src: url('Touche-Bold.woff2') format('woff2'),
+        url('Touche-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+

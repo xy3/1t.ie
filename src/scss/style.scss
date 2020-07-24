@@ -1,0 +1,60 @@
+@import 'variables';
+@import 'default';
+@import 'movies';
+@import 'sidebar';
+@import 'admin';
+@import 'homepage';
+@import 'request_page';
+@import 'lightbox';
+@import 'issuebox';
+@import 'login';
+@import 'responsive';
+
+
+
+
+
+
+
+
+video {
+	max-height: 96vh;
+}
+
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+}
+
+.nm {
+	border: 1px solid  white;
+	padding: 4px;
+	margin: 2px;
+}
+.success {
+	color: greenyellow;
+	text-align: center;
+	margin: 0;
+}
+.fail {
+	color: red;
+	text-align: center;
+	margin: 0;
+}
+
+
+
+.poster img {
+	width: 100%;
+	height: 100%;
+}
+.video_file_list p {
+	cursor: pointer;
+}

@@ -1,0 +1,85 @@
+
+$poster-width: 265px;
+$poster-height: 400px;
+
+@mixin sidebar-width($prop) {
+	#{$prop}: 5vw;
+	
+	@media only screen and (max-width: 1300px) {
+		#{$prop}: 6vw;
+	}
+}
+
+// $sidebar-width: 5vw;
+
+
+// Horizontal gradient
+@mixin h-gradient($from, $to) {
+	background: $to;
+	background: -moz-linear-gradient(left, $from 0%, $to 100%);
+	background: -webkit-gradient(left top, right top, color-stop(0%, $from), color-stop(100%, $to));
+	background: -webkit-linear-gradient(left, $from 0%, $to 100%);
+	background: -o-linear-gradient(left, $from 0%, $to 100%);
+	background: -ms-linear-gradient(left, $from 0%, $to 100%);
+	background: linear-gradient(to right, $from 0%, $to 100%);
+}
+
+
+@mixin transform($transforms) {
+	-webkit-transform: $transforms;
+	-moz-transform: $transforms;
+	-ms-transform: $transforms;
+	transform: $transforms;
+}
+
+@mixin transition($transition...) {
+	-moz-transition:    $transition;
+	-o-transition:      $transition;
+	-webkit-transition: $transition;
+	transition:         $transition;
+}
+
+
+@mixin flex(){
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+}
+
+/*===================
+= Colors
+====================*/
+
+$hover_red: #FF0041;
+$main_red: #FF1F59;
+$light_red: #FF3B6E;
+$mid_red: #E3144A;
+$border_red: #D51446;
+
+$overlay: rgba(255, 41, 96, 0.6);
+
+$dark_red: #f83745;
+
+
+
+// $bg-light: #1D2429;
+// $bg-medium: #151a1f;
+// $bg-dark: #0D1115;
+
+$bg-light: #191F24;
+$bg-medium: #11161A;
+$bg-dark: #090C0F;
+
+$bg-lighter: #3D474F;
+
+$alt: $bg-lighter;
+$alt-hover: #364048;
+
+
+$text-color: #ccdbe6;
+
+
+$blue_highlight: #3AE7F6;
+$red_highlight: #F91B7E;
