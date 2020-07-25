@@ -9,7 +9,6 @@ require 'json.inc.php';
  */
 class Api
 {
-    public $site_url = "https://1t.lo/";
     /**
      * @var Hashids
      */
@@ -129,9 +128,9 @@ class Api
         }
     }
 
-    public function get_site_url()
+    public function get_site_url($req)
     {
-        return $this->site_url;
+        return "//" . $req->server()->HTTP_HOST . "/";
     }
 
     private function compare_urls(string $url_1, string $url_2)

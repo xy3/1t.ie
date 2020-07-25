@@ -19,6 +19,16 @@ TL;DR*
 
 \*Not all features added currently  
 
+
+### Installing on your server
+
+In a PHP/Apache web accessible directory run:
+```bash
+git clone https://github.com/xy3/1t.ie.git
+cd 1t.ie
+composer install
+```
+
 Todo
 - User interface
 - User accounts
