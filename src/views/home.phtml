@@ -1,0 +1,28 @@
+<html lang="en">
+
+<?php
+include 'components/head.php';
+?>
+
+<body>
+<section>
+    <div class="container">
+        <h1>1t.ie</h1>
+        <form action="/api" id="shorten_url_form" method="get">
+            <label for="url">URL to shorten</label>
+            <input type="text" name="url" id="url">
+            <button class="red inline" type="submit" form="shorten_url_form">Submit</button>
+        </form>
+
+        <div class="result">
+            <p class="result-text"></p>
+        </div>
+    </div>
+</section>
+
+<script type="javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="javascript" src="src/js/scripts.js"></script>
+</body>
+</html>
+
+

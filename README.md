@@ -5,8 +5,8 @@ Quick link shortener
 ### Features
 
 1t.ie provides easy link shortening without needing to sign in. 
-Shortened links are as short as possible and accept both POST and GET requests without issue.
-POST/GET parameters passed to the shortened link are automatically forwarded to the resolved URL.
+Shortened links are as short as possible and GET request parameters will be forwarded
+to the resolved URL.
 
 TL;DR*
 

@@ -2,7 +2,7 @@
 
 use Hashids\Hashids;
 
-require 'json.inc.php';
+require 'Json.php';
 
 /**
  * 1t Api
@@ -24,7 +24,7 @@ class Api
     public function execute($req, $resp)
     {
         if (!is_callable(array($this, $req->action))) {
-            $body = $this->invalid_action($req->action);
+            $body = $this->invalidAction($req->action);
             return $resp->body($body)->send();
         }
         $body = $this->{$req->action}($req, $resp);
@@ -59,24 +59,24 @@ class Api
         return $resp->redirect($url, $code=200);
     }
 
-    private function invalid_action(string $action): string
+    private function invalidAction(string $action): string
     {
         return Json::failure("Invalid action specified: '$action'");
     }
 
-    private function add_link(object $req): string
+    private function addLink(object $req): string
     {
         $db = $this->app->db;
         $user_id = $req->param("user_id") ?? 2;
         $url = $req->param("url");
 
         if (!$url) {
-            return $this->invalid_parameters($req->paramsGet(), "No Url provided");
+            return $this->invalidParameters($req->paramsGet(), "No Url provided");
         } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return $this->invalid_parameters($req->paramsGet(), "Url is invalid");
+            return $this->invalidParameters($req->paramsGet(), "Url is invalid");
         }
 
-        $url_id = $this->add_url($url);
+        $url_id = $this->addUrl($url);
         $hash_id = $this->hashids->encode($url_id);
 
         // Check if link already exists
@@ -98,19 +98,19 @@ class Api
         $result = array(
             'url_id' => $url_id,
             'short_slug' => $hash_id,
-            'full_link' => Api::get_site_url() . $hash_id
+            'full_link' => Api::getSiteUrl() . $hash_id
         );
         return Json::message(true, $result);
     }
 
-    private function invalid_parameters(array $params, string $error_message): string
+    private function invalidParameters(array $params, string $error_message): string
     {
         $data = array("parameters_provided" => $params->all());
         $data['reason'] = "Incorrect parameters provided. [Error: $error_message]";
         return Json::message(false, $data);
     }
 
-    private function add_url(string $url)
+    private function addUrl(string $url)
     {
         // $parsed_url = parse_url($url); // TODO: Find links with similar attributes and compare them
         // for now though, let's just strip any excess slashes
@@ -128,12 +128,12 @@ class Api
         }
     }
 
-    public function get_site_url($req)
+    public function getSiteUrl($req)
     {
         return "//" . $req->server()->HTTP_HOST . "/";
     }
 
-    private function compare_urls(string $url_1, string $url_2)
+    private function compareUrls(string $url_1, string $url_2)
     {
         $parsed_1 = parse_url($url_1);
         $parsed_2 = parse_url($url_2);

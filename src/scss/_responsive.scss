@@ -1,151 +1,16 @@
-@media only screen and(max-device-height: 650px) {	
-	.lightbox {
-		.close-btn {
-			top: 0;
-			right: -80px;
-		}
-	}
-}
-
-
-@media only screen and(max-device-height: 580px) {	
-	.sidebar {
-		.user-links {
-			margin-top: -192px;
-			.tip {
-				top: 2px;
-			}
-			button {
-				margin: 7px;
-			}
-		}
-	}
-}
-
-@media only screen and(max-device-width: 1300px) {	
-	.sidebar {
-		width: 6vw;
-	}
-}
-
 // Small screen
 @media only screen and(max-device-width: 1200px) {
-	.lightbox {
-		width: 80%;
-		// max-width: unset;
-	}
-	
 
-	// .request-info {
-	// 	&>.request-search {
-	// 		display: none;
-	// 	}
-	// }
-
-	// .mob.request-info {
-	// 	display: flex;
-	// 	.request-search {
-	// 		display: block;
-	// 	}
-	// }
 }
-
-
 // Small screen / ipad
 @media only screen and(max-device-width: 1024px) {
-	.login_register_div {
-		width: 60%;
-		font-size: 1em;
-		button {
-			height: auto;
-			padding: 0.5em 1em;
-			font-size: 1.2em;
-		}
-		input {
-			font-size: 1.2em;
-			height: auto;
-			margin: 0.3em 0;
-		}
-	}
 
-	.container {
-		padding-left: 0;
-	}
-
-	.most {
-		width: 100%;
-	}
-
-	.sidebar {
-		display: none;
-		// background: $bg-medium;
-	}
-
-	.mobile_menu {
-		// display: initial;
-	}
-	.mobile_menu_button {
-		display: block;
-	}
 }
-
-
 // Tablets
 @media only screen and(max-device-width: 768px) {
-	.sortby {
-		font-size: 1.5em;
-	}
-	.lightbox {
-		width: 100%;
-		// max-width: unset;
-		.add-btn,
-		.info-btn,
-		.close-btn
-		{
-			font-size: 2em;
-			width: 100px;
-			height: 100px;
-			box-shadow: inset 0 0 0 3px white;
-			
-			.layer {
-				width: 4px;
-				height: 4px;
-			}
-		}
-		.close-btn {
-			top: -120px;
-			right: 20px;
-		}
-	}
 
-	
-
-	.login_register_div {
-		width: 80%;
-		font-size: 1.5em;
-		button {
-			height: auto;
-			padding: 0.5em 1em;
-			font-size: 1em;
-		}
-		input {
-			font-size: 1.2em;
-			height: auto;
-			margin: 0.3em 0;
-		}
-	}	
 }
-
-
-
 // Phones
 @media only screen and(max-device-width: 540px) {
-	.mobile_menu {
-		.menu {
-			.row {
-				flex-direction: column;
-			}
-		}
-	}
-}
 
+}

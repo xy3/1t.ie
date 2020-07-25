@@ -7,8 +7,8 @@
   },
   "autoload": {
     "files": [
-      "src/php/api.php",
-      "src/php/json.inc.php"
+      "src/php/Api.php",
+      "src/php/Json.php"
     ]
   }
 }

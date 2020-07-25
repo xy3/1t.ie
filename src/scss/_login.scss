@@ -1,36 +1,39 @@
 
-
 .login_register_div {
-	background: $bg-light;
-	padding: 2em;
-	text-align: center;
-	margin: 0 auto;
-	width: 400px;
+  background: $bg-light;
+  padding: 2em;
+  text-align: center;
+  margin: 0 auto;
+  width: 400px;
 
-	input {
-		width: 100%;
-	}
-	label {
-		color: white;
-	}
-	.tab-btns {
-		white-space: nowrap;
-		button {
-			border: 0;
-			border-radius: 0;
-			float: left;
-			margin-bottom: 2em;
-			width: 50%;
-		}
-		button.inactive {
-			background-color: $bg-dark;
-			color: #50738B;
-			border-radius: 0;
-		}
-	}
+  input {
+    width: 100%;
+  }
 
-	.register {
-		// Hide it initially
-		display: none;
-	}
+  label {
+    color: white;
+  }
+
+  .tab-btns {
+    white-space: nowrap;
+
+    button {
+      border: 0;
+      border-radius: 0;
+      float: left;
+      margin-bottom: 2em;
+      width: 50%;
+    }
+
+    button.inactive {
+      background-color: $bg-dark;
+      color: #50738B;
+      border-radius: 0;
+    }
+  }
+
+  .register {
+    // Hide it initially
+    display: none;
+  }
 }
