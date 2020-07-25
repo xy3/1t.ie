@@ -9,7 +9,7 @@ require 'json.inc.php';
  */
 class Api
 {
-    public $site_url = "https://1t.ie/";
+    public $site_url = "https://1t.lo/";
     /**
      * @var Hashids
      */
@@ -32,20 +32,43 @@ class Api
         return $resp->body($body)->send();
     }
 
-    private function invalid_action($action): string
+    public function resolve($req, $resp)
+    {
+        $db = $this->app->db;
+        $stmt_get_url_row = $db->prepare(/** @lang SQL */ "
+            SELECT * FROM links 
+            LEFT JOIN urls
+            ON links.url_id = urls.url_id
+            WHERE links.short_slug=?
+        ");
+
+        $success = $stmt_get_url_row->execute(array($req->short_slug));
+        if (!$success) {
+            return $resp->body(Json::message(false, array("reason" => "Database lookup query error",
+                "error_info" => $stmt_get_url_row->errorInfo())));
+        } elseif (!$stmt_get_url_row->rowCount()) {
+            return $resp->body(Json::failure("No link exists with that ID"))->send();
+        }
+        $row = $stmt_get_url_row->fetch();
+        $url = base64_decode($row->url_base64);
+
+        // Parameter forwarding
+        if ($req->server()->REDIRECT_QUERY_STRING) {
+            $url .= strpos($url, "?") ? "&" : "?";
+            $url .= $req->server()->REDIRECT_QUERY_STRING;
+        }
+        return $resp->redirect($url, $code=200);
+    }
+
+    private function invalid_action(string $action): string
     {
         return Json::failure("Invalid action specified: '$action'");
     }
 
-    public function get_site_url() {
-        return $this->site_url;
-    }
-
-    private function add_link($req, $resp): string
+    private function add_link(object $req): string
     {
         $db = $this->app->db;
-        $subdomain = $req->param("subdomain");
-        $user_id = $req->param("user_id");
+        $user_id = $req->param("user_id") ?? 2;
         $url = $req->param("url");
 
         if (!$url) {
@@ -60,27 +83,28 @@ class Api
         // Check if link already exists
         $stmt = $db->prepare("SELECT * FROM links WHERE url_id=?");
         $stmt->execute(array($url_id));
-        if ($stmt->rowCount()) {
-            $row = $stmt->fetch(PDO::FETCH_OBJ);
-        } else {
+        if (!$stmt->rowCount()) {
             // It doesn't - create it
-            $stmt = $db->prepare("INSERT INTO links (user_id, url_id, short_slug, subdomain, does_expire, expiry_date) VALUES (?,?,?,?,?, NOW() + INTERVAL 7 DAY)");
-            $success = $stmt->execute(array(2, $url_id, $hash_id, "", true));
+            $stmt = $db->prepare("
+                    INSERT INTO links (user_id, url_id, short_slug, does_expire, expiry_date)
+                    VALUES (?,?,?,?, NOW() + INTERVAL 7 DAY)
+                    ");
+            $success = $stmt->execute(array($user_id, $url_id, $hash_id, true));
             if (!$success) {
                 return Json::message(false, array("error_info" => $stmt->errorInfo()));
             }
-            $row = $stmt->fetch(PDO::FETCH_OBJ);
+            $db->lastInsertId();
         }
 
         $result = array(
             'url_id' => $url_id,
             'short_slug' => $hash_id,
-            'full_link' => $row->subdomain . Api::get_site_url() . $hash_id
+            'full_link' => Api::get_site_url() . $hash_id
         );
         return Json::message(true, $result);
     }
 
-    private function invalid_parameters($params, $error_message): string
+    private function invalid_parameters(array $params, string $error_message): string
     {
         $data = array("parameters_provided" => $params->all());
         $data['reason'] = "Incorrect parameters provided. [Error: $error_message]";
@@ -104,7 +128,14 @@ class Api
             return $db->lastInsertId();
         }
     }
-    private function compare_urls(string $url_1, string $url_2) {
+
+    public function get_site_url()
+    {
+        return $this->site_url;
+    }
+
+    private function compare_urls(string $url_1, string $url_2)
+    {
         $parsed_1 = parse_url($url_1);
         $parsed_2 = parse_url($url_2);
         // TODO: go through each attribute and compare them and perhaps compute a similarity score

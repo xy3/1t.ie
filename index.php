@@ -15,7 +15,7 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     // Handle exceptions => flash the message and redirect to the referrer
     $klein->onError(function ($klein, $err_msg) {
         $klein->service()->flash($err_msg);
-//        $klein->service()->back();
+        $klein->service()->back();
     });
 
     // $app also can store lazy services, e.g. if you don't want to
@@ -26,13 +26,20 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
         return $db;
     });
+
+    $app->register('api', function() use ($app) {
+        return new Api($app);
+    });
 });
 
 
 
 $klein->respond(['POST','GET'], '/api/[:action]', function ($req, $resp, $service, $app) {
-	$api = new Api($app);
-	$api->execute($req, $resp);
+	$app->api->execute($req, $resp);
+});
+
+$klein->respond(['POST','GET'], '/[:short_slug]', function ($req, $resp, $service, $app) {
+    $app->api->resolve($req, $resp);
 });
 
 
