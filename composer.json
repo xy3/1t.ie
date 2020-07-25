@@ -1,5 +1,14 @@
 {
-    "require": {
-        "klein/klein": "^2.1"
-    }
+  "require": {
+    "klein/klein": "^2.1",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "hashids/hashids": "4.0.0"
+  },
+  "autoload": {
+    "files": [
+      "src/php/api.php",
+      "src/php/json.inc.php"
+    ]
+  }
 }

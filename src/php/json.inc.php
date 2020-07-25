@@ -6,15 +6,20 @@
  */
 class Json
 {
-	function status($status, $msg='') {
-		echo json_encode(array('status' => $status, 'message' => $msg));
+	static function status($status, $msg='') : string {
+		return json_encode(array('status' => $status, 'message' => $msg));
 	}
 
-	function success($msg='') {
-		return status(1, $msg);
+	static function success($msg='') : string {
+		return Json::status(1, $msg);
 	}
 
-	function failure($msg='') {
-		return status(0, $msg);
+	static function failure($msg='') : string {
+		return Json::status(0, $msg);
 	}
+
+	static function message($success, $arr) : string {
+	    $arr['success'] = $success;
+	    return json_encode($arr);
+    }
 }
