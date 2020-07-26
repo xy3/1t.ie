@@ -1,9 +1,9 @@
 <?php
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
+//
+//error_reporting(E_ALL);
+//ini_set('display_errors', TRUE);
+//ini_set('display_startup_errors', TRUE);
 
 use OneT\Api;
 use Klein\Klein;
@@ -13,9 +13,11 @@ require 'vendor/autoload.php';
 const VIEWS_DIR = "src/views/";
 const COMPONENTS_DIR = "src/views/components/";
 
+$config = parse_ini_file("config.ini");
+
 $klein = new Klein();
 
-$klein->respond(function ($request, $response, $service, $app) use ($klein) {
+$klein->respond(function ($request, $response, $service, $app) use ($config, $klein) {
     // Handle exceptions => flash the message and redirect to the referrer
     $klein->onError(function ($klein, $err_msg) {
         $klein->service()->flash($err_msg);
@@ -23,9 +25,9 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     });
 
     // lazy services (Only get instantiated on first call)
-    $app->register('db', function () {
-        // Replace this with your actual database login DSN
-        $db = new PDO('mysql:dbname=1t.ie;host=localhost', 'root', '');
+    $app->register('db', function () use ($config) {
+        // Replace the values in config.ini with your actual database login details
+        $db = new PDO("mysql:dbname={$config['name']};host={$config['host']}", $config['username'], $config['password']);
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
         return $db;
     });

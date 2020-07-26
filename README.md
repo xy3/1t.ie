@@ -24,14 +24,19 @@ TL;DR*
 ### Installing on your server
 
 First set up an SQL database and import `setup.sql` to build the table structure.
-Then, in a PHP/Apache web accessible directory run:
+Once finished, modify the values in config.ini with your actual database login details.
+
+Then, in a PHP / Apache web accessible directory run:
 ```bash
 git clone https://github.com/xy3/1t.ie.git
 cd 1t.ie
 composer install
 ```
 
+Done.
+
 Todo
-- User interface
+- My account page
 - User accounts
 - Link expiry handling
+- Recent urls shortened by this PC / IP address

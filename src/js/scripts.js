@@ -16,4 +16,13 @@ jQuery(document).ready(function($) {
 				}
 			})
 	})
+
+	$(".copy").click(function(e){
+		e.preventDefault()
+		navigator.clipboard.writeText($("#shortened_link").text());
+		$(".copy").text("Copied!")
+		setTimeout(() => {
+			$(".copy").text("Copy")
+		}, 4000)
+	})
 })
