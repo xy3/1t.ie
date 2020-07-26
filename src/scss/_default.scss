@@ -8,14 +8,22 @@ html {
   font-family: 'Inconsolata', monospace;
   font-weight: normal;
   font-style: normal;
-  background-color: $bg-dark;
+  background-color: $bg-medium;
+  color: $text-color;
 }
 
 body {
   width: 70vw;
-  padding: 2em;
-  margin: 0 auto;
-  border: 1px solid white;
+  margin: 50px auto;
+  background: $bg-light;
+}
+
+section {
+    padding: 0 3em;
+}
+
+h1 {
+  font-size: 3em;
 }
 
 h1, h2 {
@@ -23,7 +31,7 @@ h1, h2 {
 }
 
 h1, h2, h3, h4, p, label {
-  color: #ccdbe6;
+  color: $text-color;
   font-style: normal;
   text-align: left;
 }
@@ -34,7 +42,17 @@ a {
   text-decoration: none;
 }
 
+
+form {
+  width: 50%;
+  background: $bg-lighter;
+  padding: 1em;
+  display: inline-block;
+}
+
 input, select {
+  width: 100%;
+  display: block;
   padding: 9px;
   height: 35px;
   outline: none;
@@ -46,19 +64,39 @@ input, select {
 }
 
 
-ul {
-  li {
+.menu {
+  ul {
     color: $text-color;
-    text-align: left;
-    margin: 10px 0;
+    width: 100%;
+    background: $bg-medium;
+    li {
+      padding: 10px;
+      text-align: left;
+      margin: 10px 0;
+      display: inline-block;
+    }
   }
 }
 
-
-.divider {
-  display: inline-block;
-  width: 10px;
+table {
+  background: $bg-dark;
+  border-radius: 5px;
+  td {
+    padding: 1em;
+  }
+  td.copy {
+    cursor: pointer;
+    &:hover {
+      background: $bg-light;
+    }
+  }
 }
+
+table, th, td {
+  border: 1px solid $bg-lighter;
+  border-collapse: collapse;
+}
+
 
 button {
   outline: none;
@@ -73,6 +111,10 @@ button {
   &.inline {
     display: inline-block;
     width: calc(50% - 5px);
+  }
+
+  &.fullwidth {
+    width: 100%;
   }
 
   &.red {
@@ -125,7 +167,6 @@ button {
   max-width: 100%;
   margin: 0 auto;
 }
-
 
 
 ::-webkit-scrollbar {

@@ -1,27 +1,33 @@
 <html lang="en">
 
-<?php
-include 'components/head.php';
-?>
+<?php $this->render($this->components . "header.phtml"); ?>
 
 <body>
+<?php $this->render($this->components . "nav.phtml"); ?>
 <section>
     <div class="container">
         <h1>1t.ie</h1>
-        <form action="/api" id="shorten_url_form" method="get">
+        <form id="shorten_url_form">
             <label for="url">URL to shorten</label>
-            <input type="text" name="url" id="url">
-            <button class="red inline" type="submit" form="shorten_url_form">Submit</button>
+            <input type="text" name="url" id="url" placeholder="eg. https://google.com/">
+            <button class="red inline fullwidth" type="submit" form="shorten_url_form">Shorten</button>
+            <p class="error-warning"></p>
         </form>
 
         <div class="result">
-            <p class="result-text"></p>
+            <h3>Here is your short link:</h3>
+            <table>
+                <tr>
+                    <td id="shortened_link">Link</td>
+                    <td class="copy">Copy to clipboard</td>
+                </tr>
+            </table>
         </div>
     </div>
 </section>
 
-<script type="javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script type="javascript" src="src/js/scripts.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="/src/js/scripts.js"></script>
 </body>
 </html>
 

@@ -5,11 +5,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
 
+use OneT\Api;
 use Klein\Klein;
 
 require 'vendor/autoload.php';
 
 const VIEWS_DIR = "src/views/";
+const COMPONENTS_DIR = "src/views/components/";
 
 $klein = new Klein();
 
@@ -34,18 +36,16 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 });
 
 $klein->respond('GET', '/', function ($req, $resp, $service, $app) {
-    $service->render(VIEWS_DIR . "home.phtml");
+    $service->render(VIEWS_DIR . "home.phtml", array('views' => VIEWS_DIR, 'components' => COMPONENTS_DIR));
 });
 
-$klein->respond(['POST', 'GET'], '/api/[a:action]', function ($req, $resp, $service, $app) {
+$klein->respond(['POST', 'GET'], '/api/[:action]', function ($req, $resp, $service, $app) {
     $app->api->execute($req, $resp);
 });
 
 $klein->respond(['POST', 'GET'], '/[a:short_slug]', function ($req, $resp, $service, $app) {
     $app->api->resolve($req, $resp);
 });
-
-
 
 
 $klein->dispatch();

@@ -23,7 +23,8 @@ TL;DR*
 
 ### Installing on your server
 
-In a PHP/Apache web accessible directory run:
+First set up an SQL database and import `setup.sql` to build the table structure.
+Then, in a PHP/Apache web accessible directory run:
 ```bash
 git clone https://github.com/xy3/1t.ie.git
 cd 1t.ie

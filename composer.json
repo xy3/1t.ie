@@ -3,12 +3,12 @@
     "klein/klein": "^2.1",
     "ext-pdo": "*",
     "ext-json": "*",
-    "hashids/hashids": "4.0.0"
+    "hashids/hashids": "4.0.0",
+    "ext-curl": "*"
   },
   "autoload": {
-    "files": [
-      "src/php/Api.php",
-      "src/php/Json.php"
-    ]
+    "psr-4": {
+      "OneT\\": "src/OneT/"
+    }
   }
 }
