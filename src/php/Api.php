@@ -64,7 +64,7 @@ class Api
         return Json::failure("Invalid action specified: '$action'");
     }
 
-    private function addLink(object $req): string
+    private function addlink(object $req): string
     {
         $db = $this->app->db;
         $user_id = $req->param("user_id") ?? 2;

@@ -37,7 +37,7 @@ $klein->respond('GET', '/', function ($req, $resp, $service, $app) {
     $service->render(VIEWS_DIR . "home.phtml");
 });
 
-$klein->respond(['POST', 'GET'], '/api/[:action]', function ($req, $resp, $service, $app) {
+$klein->respond(['POST', 'GET'], '/api/[a:action]', function ($req, $resp, $service, $app) {
     $app->api->execute($req, $resp);
 });
 
