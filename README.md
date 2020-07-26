@@ -1,6 +1,7 @@
 # 1t.ie
 Quick link shortener
 
+Live at [1t.ie](https://1t.ie)
 
 ### Features
 
