@@ -1,8 +1,8 @@
 <?php
 
-use Hashids\Hashids;
+namespace OneT;
 
-require 'Json.php';
+use Hashids\Hashids;
 
 /**
  * 1t Api
@@ -71,9 +71,9 @@ class Api
         $url = $req->param("url");
 
         if (!$url) {
-            return $this->invalidParameters($req->paramsGet(), "No Url provided");
-        } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return $this->invalidParameters($req->paramsGet(), "Url is invalid");
+            return $this->invalidParameters($req->params(), "No Url provided");
+        } elseif (!StrictUrlValidator::validate($url, true, true)) {
+            return $this->invalidParameters($req->params(), StrictUrlValidator::getError());
         }
 
         $url_id = $this->addUrl($url);
@@ -98,14 +98,14 @@ class Api
         $result = array(
             'url_id' => $url_id,
             'short_slug' => $hash_id,
-            'full_link' => Api::getSiteUrl() . $hash_id
+            'full_link' => Api::getSiteUrl($req) . $hash_id
         );
         return Json::message(true, $result);
     }
 
     private function invalidParameters(array $params, string $error_message): string
     {
-        $data = array("parameters_provided" => $params->all());
+        $data = array("parameters_provided" => $params);
         $data['reason'] = "Incorrect parameters provided. [Error: $error_message]";
         return Json::message(false, $data);
     }
@@ -130,7 +130,8 @@ class Api
 
     public function getSiteUrl($req)
     {
-        return "//" . $req->server()->HTTP_HOST . "/";
+        $protocol = $req->isSecure() ? "https://" : "http://";
+        return $protocol . $req->server()->get('HTTP_HOST') . "/";
     }
 
     private function compareUrls(string $url_1, string $url_2)
