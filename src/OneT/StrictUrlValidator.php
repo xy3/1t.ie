@@ -10,6 +10,7 @@ namespace OneT;
  *
  * This class is designed to provide stricter URL validation than
  * built-in PHP functions do on their own.
+ * Github: https://github.com/salieri/StrictUrlValidator
  *
  **/
 
