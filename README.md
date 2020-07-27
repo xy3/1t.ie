@@ -1,5 +1,5 @@
 # 1t.ie
-Quick link shortener
+Quick Short link generator. This began as a 3-day coding challenge but here we are I guess ¯\_(ツ)_/¯
 
 Live at [1t.ie](https://1t.ie)
 
