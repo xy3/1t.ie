@@ -106,7 +106,7 @@ class Api
     private function invalidParameters(array $params, string $error_message): string
     {
         $data = array("parameters_provided" => $params);
-        $data['message'] = "Incorrect parameters provided. [Error: $error_message]";
+        $data['message'] = "Bad parameters provided. [Error: $error_message]";
         return Json::message(false, $data);
     }
 

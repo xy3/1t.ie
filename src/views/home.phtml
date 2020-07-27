@@ -4,27 +4,62 @@
 
 <body>
 <?php $this->render($this->components . "nav.phtml"); ?>
-<section>
-    <div class="container">
+
+<div class="space large"></div>
+<div class="space large"></div>
+
+<section class="padtop">
+    <div class="content">
+
         <h1>1t.ie</h1>
-        <form id="shorten_url_form">
-            <label for="url">URL to shorten</label>
-            <input type="text" name="url" id="url" placeholder="eg. https://google.com/">
-            <button class="red inline fullwidth" type="submit" form="shorten_url_form">Shorten</button>
-            <p class="error-warning"></p>
-        </form>
+
+        <div class="frame">
+            <div class="frame__header">
+                <h6 class="frame__title m-0">Link Shortener</h6>
+            </div>
+            <div class="frame__body">
+                <form id="shorten_url_form">
+                    <div class="form-group">
+                        <label for="url" class="form-group-label label-large">URL</label>
+                        <input type="text" class="form-group-input input-large" id="url" name="url" placeholder="eg. https://example.com">
+                        <button class="form-group-btn btn-large btn-primary" id="shorten-btn" type="submit" form="shorten_url_form">Go</button>
+                    </div>
+                </form>
+            </div>
+            <div class="frame__footer"></div>
+        </div>
+
+        <div class="toast toast--error shorten-error">
+            <button class="btn-close"></button>
+            <p class="error-warning">Error</p>
+        </div>
+
+        <div class="space large"></div>
 
         <div class="result">
-            <h3>Here is your short link:</h3>
-            <table>
-                <tr>
-                    <td id="shortened_link">Link</td>
-                    <td class="copy">Copy</td>
-                </tr>
-            </table>
+            <div class="row">
+                <div class="col-10 offset-1">
+                    <h3>Here is your link:</h3>
+                    <div class="tile tile--center"
+                         style="box-shadow: 0 3px 6px rgba(0,0,0,0.06), 0 3px 6px rgba(0,0,0,0.03); padding: 0.25rem 1rem;">
+                        <div class="tile__container">
+                            <h5 id="shortened_link">https://1t.ie/</h5>
+                        </div>
+                        <div class="tile__buttons">
+                            <button class="copy btn-primary btn-large uppercase">Copy</button>
+                            <button class="btn-large uppercase"><a href="/" target="_blank" id="open_in_new_tab">Open in new tab</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<div class="space large"></div>
+
+
+<?php $this->render($this->components . "footer.phtml"); ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/src/js/scripts.js"></script>
