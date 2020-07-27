@@ -1,5 +1,5 @@
 # 1t.ie
-Quick Short link generator. This began as a 3-day coding challenge but here we are I guess ¯\_(ツ)_/¯
+Quick Short link generator. This began as a 3-day coding challenge but here we are I guess 🤷
 
 Live at [1t.ie](https://1t.ie)
 
