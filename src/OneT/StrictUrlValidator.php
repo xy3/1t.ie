@@ -159,8 +159,8 @@ class StrictUrlValidator
 		curl_setopt( $curl, CURLOPT_URL, $url );
 		curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true );
 		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 1 );
-        curl_setopt( $curl, CURLOPT_TIMEOUT, 1 );
+        curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 5 );
+        curl_setopt( $curl, CURLOPT_TIMEOUT, 5 );
 
 
 		if( curl_exec( $curl ) === false )
