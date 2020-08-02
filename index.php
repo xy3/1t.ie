@@ -10,9 +10,6 @@ use Klein\Klein;
 
 require 'vendor/autoload.php';
 
-const VIEWS_DIR = "src/views/";
-const COMPONENTS_DIR = "src/views/components/";
-
 $config = parse_ini_file("config.ini");
 
 $klein = new Klein();
