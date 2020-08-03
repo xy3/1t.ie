@@ -4,11 +4,12 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', TRUE);
 //ini_set('display_startup_errors', TRUE);
+require 'vendor/autoload.php';
 
 use OneT\Api;
+use OneTUI\Views;
 use Klein\Klein;
 
-require 'vendor/autoload.php';
 
 $config = parse_ini_file("config.ini");
 
@@ -35,7 +36,12 @@ $klein->respond(function ($request, $response, $service, $app) use ($config, $kl
 });
 
 $klein->respond('GET', '/', function ($req, $resp, $service, $app) {
-    $service->render(VIEWS_DIR . "home.phtml", array('views' => VIEWS_DIR, 'components' => COMPONENTS_DIR));
+    $v = new Views();
+    echo $v->hello();
+//    echo Views::hello();
+//    echo "hey";
+//    $views->home();
+//    $service->render(VIEWS_DIR . "home.phtml", array('views' => VIEWS_DIR, 'components' => COMPONENTS_DIR));
 });
 
 $klein->respond(['POST', 'GET'], '/api/[:action]', function ($req, $resp, $service, $app) {

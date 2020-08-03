@@ -10,5 +10,6 @@
     "psr-4": {
       "OneT\\": "src/OneT/"
     }
-  }
+  },
+  "minimum-stability": "dev"
 }
