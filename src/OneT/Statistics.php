@@ -17,6 +17,10 @@ class Statistics
         $this->app = $_app;
     }
 
+    /**
+     * @param $user_id
+     * @return array
+     */
     public function getUserLinks($user_id)
     {
         $db = $this->app->db;

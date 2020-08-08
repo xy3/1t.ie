@@ -8,6 +8,10 @@ use PDO;
 
 class Database
 {
+    /**
+     * @param $config
+     * @return PDO
+     */
     static function newConnection($config)
     {
         $db = new PDO("mysql:dbname={$config['name']};host={$config['host']}", $config['username'], $config['password']);

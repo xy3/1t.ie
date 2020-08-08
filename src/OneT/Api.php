@@ -9,18 +9,24 @@ use Hashids\Hashids;
  */
 class Api
 {
-    /**
-     * @var Hashids
-     */
     private $hashids;
     private $app;
 
+    /**
+     * Api constructor.
+     * @param $_app
+     */
     function __construct($_app)
     {
         $this->app = $_app;
         $this->hashids = new Hashids();
     }
 
+    /**
+     * @param $req
+     * @param $resp
+     * @return mixed
+     */
     public function execute($req, $resp)
     {
         if (!is_callable(array($this, $req->action))) {
@@ -31,6 +37,11 @@ class Api
         return $resp->body($body)->send();
     }
 
+    /**
+     * @param $req
+     * @param $resp
+     * @return mixed
+     */
     public function resolve($req, $resp)
     {
         $db = $this->app->db;
@@ -56,7 +67,17 @@ class Api
             $url .= strpos($url, "?") ? "&" : "?";
             $url .= $req->server()->REDIRECT_QUERY_STRING;
         }
-        return $resp->redirect($url, $code=200);
+        return $resp->redirect($url, $code = 200);
+    }
+
+    /**
+     * @param $req
+     * @return string
+     */
+    public function getSiteUrl($req)
+    {
+        $protocol = $req->isSecure() ? "https://" : "http://";
+        return $protocol . $req->server()->get('HTTP_HOST') . "/";
     }
 
     private function invalidAction(string $action): string
@@ -126,12 +147,6 @@ class Api
             $stmt->execute(array(base64_encode($url), md5($url)));
             return $db->lastInsertId();
         }
-    }
-
-    public function getSiteUrl($req)
-    {
-        $protocol = $req->isSecure() ? "https://" : "http://";
-        return $protocol . $req->server()->get('HTTP_HOST') . "/";
     }
 
     private function compareUrls(string $url_1, string $url_2)
