@@ -1,6 +1,14 @@
 {
+  "name": "xy3/1t-api",
+  "description": "Api for 1t.ie",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Theo Morgan",
+      "email": "theo@1t.ie"
+    }
+  ],
   "require": {
-    "klein/klein": "^2.1",
     "ext-pdo": "*",
     "ext-json": "*",
     "hashids/hashids": "4.0.0",
@@ -10,6 +18,5 @@
     "psr-4": {
       "OneT\\": "src/OneT/"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }
