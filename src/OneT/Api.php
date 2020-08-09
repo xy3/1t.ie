@@ -15,11 +15,11 @@ class Api
 
     /**
      * Api constructor.
-     * @param PDO $_pdo
+     * @param array $config
      */
-    function __construct($_pdo)
+    function __construct($config)
     {
-        $this->pdo = $_pdo;
+        $this->pdo = Database::newConnection($config);
         $this->hashids = new Hashids();
     }
 
