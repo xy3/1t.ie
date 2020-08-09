@@ -16,11 +16,11 @@ class Accounts
 
     /**
      * Statistics constructor.
-     * @param PDO $_pdo
+     * @param PDO $pdo
      */
-    function __construct($_pdo)
+    function __construct($pdo)
     {
-        $this->pdo = $_pdo;
+        $this->pdo = $pdo;
     }
 
 

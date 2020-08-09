@@ -15,11 +15,11 @@ class Api
 
     /**
      * Api constructor.
-     * @param array $config
+     * @param PDO $pdo
      */
-    function __construct($config)
+    function __construct($pdo)
     {
-        $this->pdo = Database::newConnection($config);
+        $this->pdo = $pdo;
         $this->hashids = new Hashids();
     }
 
@@ -85,7 +85,7 @@ class Api
         return Json::failure("Invalid action specified: '$action'");
     }
 
-    private function addlink(object $req): string
+    private function addlink($req): string
     {
         $user_id = $req->param("user_id") ?? 2;
         $url = $req->param("url");
@@ -141,8 +141,8 @@ class Api
         if ($stmt->rowCount()) {
             return $stmt->fetch()->url_id;
         } else {
-            $stmt = $this->pdo->prepare("INSERT INTO urls (url_base64, md5) VALUES(?, ?)");
-            $stmt->execute(array(base64_encode($url), md5($url)));
+            $stmt = $this->pdo->prepare("INSERT INTO urls (url_base64, url_plain, md5) VALUES(?, ?, ?)");
+            $stmt->execute(array(base64_encode($url), $url, md5($url)));
             return $this->pdo->lastInsertId();
         }
     }
