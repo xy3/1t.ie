@@ -3,6 +3,7 @@
 namespace OneT;
 
 use Hashids\Hashids;
+use PDO;
 
 /**
  * 1t Api
@@ -10,15 +11,15 @@ use Hashids\Hashids;
 class Api
 {
     private $hashids;
-    private $app;
+    private $pdo;
 
     /**
      * Api constructor.
-     * @param $_app
+     * @param PDO $_pdo
      */
-    function __construct($_app)
+    function __construct($_pdo)
     {
-        $this->app = $_app;
+        $this->pdo = $_pdo;
         $this->hashids = new Hashids();
     }
 
@@ -44,8 +45,7 @@ class Api
      */
     public function resolve($req, $resp)
     {
-        $db = $this->app->db;
-        $stmt_get_url_row = $db->prepare(/** @lang SQL */ "
+        $stmt_get_url_row = $this->pdo->prepare(/** @lang SQL */ "
             SELECT * FROM links 
             LEFT JOIN urls
             ON links.url_id = urls.url_id
@@ -87,7 +87,6 @@ class Api
 
     private function addlink(object $req): string
     {
-        $db = $this->app->db;
         $user_id = $req->param("user_id") ?? 2;
         $url = $req->param("url");
 
@@ -101,11 +100,11 @@ class Api
         $hash_id = $this->hashids->encode($url_id);
 
         // Check if link already exists
-        $stmt = $db->prepare("SELECT * FROM links WHERE url_id=?");
+        $stmt = $this->pdo->prepare("SELECT * FROM links WHERE url_id=?");
         $stmt->execute(array($url_id));
         if (!$stmt->rowCount()) {
             // It doesn't - create it
-            $stmt = $db->prepare("
+            $stmt = $this->pdo->prepare("
                     INSERT INTO links (user_id, url_id, short_slug, does_expire, expiry_date)
                     VALUES (?,?,?,?, NOW() + INTERVAL 7 DAY)
                     ");
@@ -113,7 +112,7 @@ class Api
             if (!$success) {
                 return Json::message(false, array("error_info" => $stmt->errorInfo()));
             }
-            $db->lastInsertId();
+            $this->pdo->lastInsertId();
         }
 
         $result = array(
@@ -137,15 +136,14 @@ class Api
         // for now though, let's just strip any excess slashes
         $url = chop($url, "/");
 
-        $db = $this->app->db;
-        $stmt = $db->prepare("SELECT * FROM urls WHERE md5=?");
+        $stmt = $this->pdo->prepare("SELECT * FROM urls WHERE md5=?");
         $stmt->execute(array(md5($url)));
         if ($stmt->rowCount()) {
             return $stmt->fetch()->url_id;
         } else {
-            $stmt = $db->prepare("INSERT INTO urls (url_base64, md5) VALUES(?, ?)");
+            $stmt = $this->pdo->prepare("INSERT INTO urls (url_base64, md5) VALUES(?, ?)");
             $stmt->execute(array(base64_encode($url), md5($url)));
-            return $db->lastInsertId();
+            return $this->pdo->lastInsertId();
         }
     }
 

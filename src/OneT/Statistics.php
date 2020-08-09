@@ -4,17 +4,19 @@
 namespace OneT;
 
 
+use PDO;
+
 class Statistics
 {
-    private $app;
+    private $pdo;
 
     /**
      * Statistics constructor.
-     * @param $_app
+     * @param PDO $_pdo
      */
-    function __construct($_app)
+    function __construct($_pdo)
     {
-        $this->app = $_app;
+        $this->pdo = $_pdo;
     }
 
     /**
@@ -23,8 +25,7 @@ class Statistics
      */
     public function getUserLinks($user_id)
     {
-        $db = $this->app->db;
-        $stmt_get_url_row = $db->prepare(/** @lang SQL */ "
+        $stmt_get_url_row = $this->pdo->prepare(/** @lang SQL */ "
             SELECT * FROM links 
             LEFT JOIN urls
             ON links.url_id = urls.url_id
