@@ -3,7 +3,6 @@
 
 namespace OneT;
 
-use Exception;
 use PDO;
 
 /**
@@ -62,6 +61,7 @@ class Accounts
         $row = $stmt_get_user->fetch();
         if (password_verify($password, $row->password)) {
             $_SESSION['logged_in'] = true;
+            $_SESSION['user_id'] = $row['user_id'];
         }
         return true;
     }
@@ -72,6 +72,7 @@ class Accounts
     public function logout()
     {
         unset($_SESSION['logged_in']);
+        unset($_SESSION['user_id']);
         return true;
     }
 
@@ -106,7 +107,7 @@ class Accounts
      * @param $username
      * @return bool
      */
-    public function isLoggedIn($username)
+    public static function isLoggedIn($username)
     {
         return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
     }
