@@ -104,10 +104,9 @@ class Accounts
     }
 
     /**
-     * @param $username
      * @return bool
      */
-    public static function isLoggedIn($username)
+    public static function isLoggedIn()
     {
         return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
     }
