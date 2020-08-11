@@ -2,9 +2,9 @@
 
 namespace OneT;
 /**
- * Json helper
+ * Response helper
  */
-class Json
+class Response
 {
     /**
      * @param $success
@@ -22,7 +22,7 @@ class Json
      */
     static function success($msg = ''): string
     {
-        return Json::status(true, $msg);
+        return self::status(true, $msg);
     }
 
     /**
@@ -31,7 +31,7 @@ class Json
      */
     static function failure($msg = ''): string
     {
-        return Json::status(false, $msg);
+        return self::status(false, $msg);
     }
 
     /**
@@ -43,5 +43,28 @@ class Json
     {
         $arr['success'] = $success;
         return json_encode($arr);
+    }
+
+
+    /**
+     * @param string $action
+     * @return string
+     */
+    static function invalidAction(string $action): string
+    {
+        return self::failure("Invalid action specified: '$action'");
+    }
+
+
+    /**
+     * @param array $params
+     * @param string $error_message
+     * @return string
+     */
+    static function invalidParameters(array $params, string $error_message): string
+    {
+        $data = array("parameters_provided" => $params);
+        $data['message'] = "Bad parameters provided. [Error: $error_message]";
+        return self::message(false, $data);
     }
 }

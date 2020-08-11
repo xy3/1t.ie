@@ -8,7 +8,7 @@ use PDO;
 /**
  * 1t Api
  */
-class Api
+class Api implements ApiCore
 {
     private $hashids;
     private $pdo;
@@ -26,16 +26,17 @@ class Api
     /**
      * @param $req
      * @param $resp
-     * @return mixed
+     * @return bool
      */
-    public function execute($req, $resp)
+    public function execute($req, $resp): bool
     {
         if (!is_callable(array($this, $req->action))) {
-            $body = $this->invalidAction($req->action);
-            return $resp->body($body)->send();
+            $resp->body(Response::invalidAction($req->action))->send();
+            return false;
         }
         $body = $this->{$req->action}($req, $resp);
-        return $resp->body($body)->send();
+        $resp->body($body)->send();
+        return true;
     }
 
     /**
@@ -54,10 +55,10 @@ class Api
 
         $success = $stmt_get_url_row->execute(array($req->short_slug));
         if (!$success) {
-            return $resp->body(Json::message(false, array("reason" => "Database lookup query error",
+            return $resp->body(Response::message(false, array("reason" => "Database lookup query error",
                 "error_info" => $stmt_get_url_row->errorInfo())));
         } elseif (!$stmt_get_url_row->rowCount()) {
-            return $resp->body(Json::failure("No link exists with that ID"))->send();
+            return $resp->body(Response::failure("No link exists with that ID"))->send();
         }
         $row = $stmt_get_url_row->fetch();
         $url = base64_decode($row->url_base64);
@@ -80,20 +81,23 @@ class Api
         return $protocol . $req->server()->get('HTTP_HOST') . "/";
     }
 
-    private function invalidAction(string $action): string
-    {
-        return Json::failure("Invalid action specified: '$action'");
-    }
 
     private function addlink($req): string
     {
-        $user_id = $req->param("user_id") ?? 2;
         $url = $req->param("url");
+        $api_key = $req->param("api_key");
+
+        $accounts = new Accounts($this->pdo);
+        $user_id = $accounts->getUserIdFromApiKey($api_key);
 
         if (!$url) {
-            return $this->invalidParameters($req->params(), "No Url provided");
+            return Response::invalidParameters($req->params(), "No Url provided");
+        } elseif (!$api_key) {
+            return Response::invalidParameters($req->params(), "No API key provided");
+        } elseif (!$user_id) {
+            return Response::invalidParameters($req->params(), "Invalid API key provided");
         } elseif (!StrictUrlValidator::validate($url, true, true)) {
-            return $this->invalidParameters($req->params(), StrictUrlValidator::getError());
+            return Response::invalidParameters($req->params(), StrictUrlValidator::getError());
         }
 
         $url_id = $this->addUrl($url);
@@ -103,34 +107,32 @@ class Api
         $stmt = $this->pdo->prepare("SELECT * FROM links WHERE url_id=?");
         $stmt->execute(array($url_id));
         if (!$stmt->rowCount()) {
-            // It doesn't - create it
+            // It doesn't exist so create it
             $stmt = $this->pdo->prepare("
                     INSERT INTO links (user_id, url_id, short_slug, does_expire, expiry_date)
                     VALUES (?,?,?,?, NOW() + INTERVAL 7 DAY)
                     ");
             $success = $stmt->execute(array($user_id, $url_id, $hash_id, true));
             if (!$success) {
-                return Json::message(false, array("error_info" => $stmt->errorInfo()));
+                return Response::message(false, array("error_info" => $stmt->errorInfo()));
             }
-            $this->pdo->lastInsertId();
+            // $this->pdo->lastInsertId();
         }
 
-        $result = array(
+        $result = [
             'url_id' => $url_id,
             'short_slug' => $hash_id,
             'full_link' => Api::getSiteUrl($req) . $hash_id
-        );
-        return Json::message(true, $result);
+        ];
+        return Response::message(true, $result);
     }
 
-    private function invalidParameters(array $params, string $error_message): string
-    {
-        $data = array("parameters_provided" => $params);
-        $data['message'] = "Bad parameters provided. [Error: $error_message]";
-        return Json::message(false, $data);
-    }
-
-    private function addUrl(string $url)
+    /**
+     * Adds a URL and returns its ID
+     * @param string $url
+     * @return int
+     */
+    private function addUrl(string $url): int
     {
         // $parsed_url = parse_url($url); // TODO: Find links with similar attributes and compare them
         // for now though, let's just strip any excess slashes
