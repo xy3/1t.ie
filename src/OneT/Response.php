@@ -67,4 +67,13 @@ class Response
         $data['message'] = "Bad parameters provided. [Error: $error_message]";
         return self::message(false, $data);
     }
+
+    /**
+     * @param $response
+     * @return bool
+     */
+    static function isSuccess($response)
+    {
+        return (bool) json_decode($response)['success'];
+    }
 }

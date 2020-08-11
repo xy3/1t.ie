@@ -150,6 +150,4 @@ class Accounts implements ApiCore
         }
         return Response::failure("Incorrect password");
     }
-
-
 }
