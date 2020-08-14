@@ -35,7 +35,7 @@ composer install
 
 Done.
 
-Todo
+### Todo
 - My account page
 - User accounts
 - Link expiry handling
