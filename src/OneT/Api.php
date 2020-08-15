@@ -31,7 +31,7 @@ class Api implements ApiCore
     public function execute($req, $resp): bool
     {
         $allowed_actions = ['addLink', 'deleteLink', 'resolve'];
-        if (!is_callable(array($this, $req->action)) || in_array($req->action, $allowed_actions)) {
+        if (!is_callable([$this, $req->action]) || in_array($req->action, $allowed_actions)) {
             $resp->body(Response::invalidAction($req->action))->send();
             return false;
         }
@@ -51,10 +51,10 @@ class Api implements ApiCore
             SELECT * FROM links 
             LEFT JOIN urls
             ON links.url_id = urls.url_id
-            WHERE links.short_slug=?
+            WHERE links.link_hash_id=?
         ");
 
-        $success = $stmt_get_url_row->execute(array($req->short_slug));
+        $success = $stmt_get_url_row->execute([$req->link_hash_id]);
 
         if (!$success)
         {
@@ -68,7 +68,7 @@ class Api implements ApiCore
             return $resp->body(Response::failure("No link exists with that ID"))->send();
         }
 
-        if (!$this->incrementVisitCount($req->short_slug)) {
+        if (!$this->incrementVisitCount($req->link_hash_id)) {
             return $resp->body(Response::failure("Failed to update visit count"))->send();
         }
 
@@ -85,18 +85,18 @@ class Api implements ApiCore
     }
 
     /**
-     * @param $short_slug
+     * @param $link_hash_id
      * @return bool
      */
-    private function incrementVisitCount($short_slug): bool
+    private function incrementVisitCount($link_hash_id): bool
     {
         $stmt_update_visit_count = $this->pdo->prepare(/** @lang SQL */ "
             UPDATE links
             SET visits = visits + 1
-            WHERE short_slug=?
+            WHERE link_hash_id=?
         ");
 
-        return $stmt_update_visit_count->execute(array($short_slug));
+        return $stmt_update_visit_count->execute([$link_hash_id]);
     }
 
     /**
@@ -110,18 +110,24 @@ class Api implements ApiCore
     }
 
 
+    /**
+     * @param $req
+     * @return string
+     */
     private function addlink($req): string
     {
         $accounts = new Accounts($this->pdo);
 
-        $is_missing_param = Utils::missingParams($req->params(), ['url', 'api_key']);
+        $is_missing_param = Utils::missingParams($req->params(), ['url']);
         if ($is_missing_param) {
             return $is_missing_param;
         }
 
         $url = $req->param("url");
-        $api_key = $req->param("api_key");
+        $api_key = $req->param("api_key") ?? "anonymous";
         $user_id = $accounts->getUserIdFromApiKey($api_key);
+
+        $is_anonymous = $api_key == "anonymous";
 
         if (!$user_id) {
             return Response::invalidParameters($req->params(), "Invalid API key provided");
@@ -130,27 +136,32 @@ class Api implements ApiCore
         }
 
         $url_id = $this->addUrl($url);
-        $hash_id = $this->hashids->encode($url_id);
+        if ($is_anonymous) {
+            $hash_id = $this->hashids->encode($url_id);
+        } else {
+            $hash_id = $this->hashids->encode($url_id, $user_id);
+        }
 
         // Check if link already exists
-        $stmt = $this->pdo->prepare("SELECT * FROM links WHERE url_id=?");
-        $stmt->execute(array($url_id));
+        $stmt = $this->pdo->prepare("SELECT * FROM links WHERE link_hash_id=?");
+        $stmt->execute([$hash_id]);
+
         if (!$stmt->rowCount()) {
             // It doesn't exist so create it
             $stmt = $this->pdo->prepare("
-                    INSERT INTO links (user_id, url_id, short_slug, does_expire, expiry_date)
+                    INSERT INTO links (link_hash_id, user_id, url_id, does_expire, expiry_date)
                     VALUES (?,?,?,?, NOW() + INTERVAL 7 DAY)
                     ");
-            $success = $stmt->execute(array($user_id, $url_id, $hash_id, true));
+            $success = $stmt->execute([$hash_id, $user_id, $url_id, true]);
             if (!$success) {
-                return Response::message(false, array("error_info" => $stmt->errorInfo()));
+                return Response::message(false, ["error_info" => $stmt->errorInfo()]);
             }
             // $this->pdo->lastInsertId();
         }
 
         $result = [
             'url_id' => $url_id,
-            'short_slug' => $hash_id,
+            'link_hash_id' => $hash_id,
             'full_link' => Api::getSiteUrl($req) . $hash_id
         ];
         return Response::message(true, $result);
@@ -163,33 +174,59 @@ class Api implements ApiCore
      */
     private function addUrl(string $url): int
     {
-        // $parsed_url = parse_url($url); // TODO: Find links with similar attributes and compare them
+        // TODO: Find links with similar attributes and compare them
+        // $parsed_url = parse_url($url);
         // for now though, let's just strip any excess slashes
         $url = chop($url, "/");
 
         $stmt = $this->pdo->prepare("SELECT * FROM urls WHERE md5=?");
-        $stmt->execute(array(md5($url)));
+        $stmt->execute([md5($url)]);
         if ($stmt->rowCount()) {
             return $stmt->fetch()->url_id;
         } else {
             $stmt = $this->pdo->prepare("INSERT INTO urls (url_base64, url_plain, md5) VALUES(?, ?, ?)");
-            $stmt->execute(array(base64_encode($url), $url, md5($url)));
+            $stmt->execute([base64_encode($url), $url, md5($url)]);
             return $this->pdo->lastInsertId();
         }
     }
 
-    private function deleteLink(string $short_slug)
+    private function deleteLink($req)
     {
+        $accounts = new Accounts($this->pdo);
+
+        $is_missing_param = Utils::missingParams($req->params(), ['link_hash_id', 'api_key']);
+        if ($is_missing_param) {
+            return $is_missing_param;
+        }
+
+        $api_key = $req->param("api_key");
+        $link_hash_id = $req->param("link_hash_id");
+        $user_id = $accounts->getUserIdFromApiKey($api_key);
+
+        if (!$user_id) {
+            return Response::invalidParameters($req->params(), "Invalid API key provided");
+        }
+
+        $stmt_check_url_usage = $this->pdo->prepare("
+            SELECT * FROM links
+            WHERE link_hash_id = ?
+        ");
+
+        $success = $stmt_check_url_usage->execute([$link_hash_id]);
+        if (!$success) {
+            return Response::failure("That link does not exist in the database.");
+        }
+
         $stmt_delete_link = $this->pdo->prepare("
             DELETE FROM links
-            WHERE short_slug = ?
+            WHERE link_hash_id = ?
         ");
-        $links_success = $stmt_delete_link->execute([$short_slug]);
+        $links_success = $stmt_delete_link->execute([$link_hash_id]);
         $stmt_delete_url = $this->pdo->prepare("
             DELETE FROM urls
-            WHERE short_slug = ?
+            WHERE link_hash_id = ?
         ");
-        $url_success = $stmt_delete_url->execute([$short_slug]);
+        $url_success = $stmt_delete_url->execute([$link_hash_id]);
     }
 
     private function compareUrls(string $url_1, string $url_2)

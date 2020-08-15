@@ -33,6 +33,15 @@ class Accounts implements ApiCore
     }
 
     /**
+     * @return object
+     */
+    public static function getCurrentUser()
+    {
+        Utils::startSession();
+        return $_SESSION['user'];
+    }
+
+    /**
      * @param string $api_key
      * @return bool
      */
@@ -43,7 +52,7 @@ class Accounts implements ApiCore
             WHERE api_key=?
         ");
 
-        $success = $stmt_get_user_id->execute(array($api_key));
+        $success = $stmt_get_user_id->execute([$api_key]);
         if (!$success || !$stmt_get_user_id->rowCount()) {
             return false;
         }
@@ -58,7 +67,7 @@ class Accounts implements ApiCore
     public function execute($req, $resp): bool
     {
         Utils::startSession();
-        if (!is_callable(array($this, $req->action))) {
+        if (!is_callable([$this, $req->action])) {
             $body = Response::invalidAction($req->action);
             $resp->body($body)->send();
             return false;
@@ -98,17 +107,17 @@ class Accounts implements ApiCore
             VALUES (?, ?, ?, ?, ?)
         ");
 
-        $success = $stmt_insert_user->execute(array(
+        $success = $stmt_insert_user->execute([
             $username,
             $email,
             password_hash($password, PASSWORD_DEFAULT),
             substr(sha1($username . uniqid()), 0, 20),
             $_SERVER['REMOTE_ADDR'],
-        ));
+        ]);
 
         if (!$success) {
-            return Response::message(false, array("reason" => "Could perform registration request",
-                "error_info" => $stmt_insert_user->errorInfo()));
+            return Response::message(false, ["message" => "Could perform registration request",
+                "error_info" => $stmt_insert_user->errorInfo()]);
         }
 
         return $this->login($request);
@@ -137,10 +146,13 @@ class Accounts implements ApiCore
             WHERE email=?
         ");
 
-        $success = $stmt_get_user->execute(array($email));
-        if (!$success || !$stmt_get_user->rowCount()) {
-            return Response::message(false, array("reason" => "Could perform login request",
-                "error_info" => $stmt_get_user->errorInfo()));
+        $success = $stmt_get_user->execute([$email]);
+        if (!$success) {
+            return Response::message(false, ["message" => "Could perform login request",
+                "error_info" => $stmt_get_user->errorInfo()]);
+        } elseif (!$stmt_get_user->rowCount()) {
+            return Response::message(false, ["message" => "No user exists with that email.",
+                "error_info" => $stmt_get_user->errorInfo()]);
         }
         $row = $stmt_get_user->fetch();
         if (password_verify($password, $row->password)) {

@@ -13,7 +13,7 @@ class Response
      */
     static function status($success, $msg = ''): string
     {
-        return json_encode(array('success' => $success, 'message' => $msg));
+        return json_encode(['success' => $success, 'message' => $msg]);
     }
 
     /**
@@ -63,8 +63,9 @@ class Response
      */
     static function invalidParameters(array $params, string $error_message): string
     {
-        $data = array("parameters_provided" => $params);
-        $data['message'] = "Bad parameters provided. [Error: $error_message]";
+        $data = ["parameters_provided" => $params];
+        $data['message'] = "Error: $error_message";
+        $data['reason'] = "Invalid parameters provided";
         return self::message(false, $data);
     }
 

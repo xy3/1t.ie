@@ -6,12 +6,12 @@ namespace OneT;
 
 use PDO;
 
-class Statistics
+class User
 {
     private $pdo;
 
     /**
-     * Statistics constructor.
+     * User constructor.
      * @param PDO $pdo
      */
     function __construct($pdo)
@@ -32,7 +32,7 @@ class Statistics
             WHERE links.user_id = ?
         ");
 
-        $success = $stmt_get_url_row->execute(array($user_id));
+        $success = $stmt_get_url_row->execute([$user_id]);
         if (!$success) {
             return [];
         }

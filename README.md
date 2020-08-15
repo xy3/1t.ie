@@ -9,8 +9,7 @@ Live at [1t.ie](https://1t.ie)
 Shortened links are as short as possible and GET request parameters will be forwarded
 to the resolved URL.
 
-TL:DR
-
+In a nutshell:
 - URL parameter forwarding
 - Really short links
 - No overhead; average 9ms URL resolution  
@@ -33,9 +32,15 @@ composer install
 ```
 *Note that you need to clone the *1t-ui* repository, not this repository.
 
-`1t-ui` needs to be the root directory of a virtual host.
+1t-ui needs to be the root directory of a virtual host.
 
 Once finished, modify the values in config.ini with your actual database login details.
+
+## Requirements
+
+1. PHP > 5.4.0
+2. Composer
+3. PHP web server (e.g. Apache, NGINX)
 
 ## Todo
 - My account page
