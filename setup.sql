@@ -60,7 +60,7 @@ CREATE TABLE `urls` (
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` text NOT NULL,
   `api_key` varchar(20) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `api_key`, `last_active`, `date_joined`, `links_created`, `ip_address`) VALUES
+INSERT INTO `users` (`user_id`, `name`, `email`, `password`, `api_key`, `last_active`, `date_joined`, `links_created`, `ip_address`) VALUES
 (1, 'anonymous', 'none', '', 'anonymous', '2020-08-11 02:55:01', '2020-08-11 02:55:01', 0, '127.0.0.1');
 
 --
@@ -99,7 +99,7 @@ ALTER TABLE `urls`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `username` (`username`,`email`);
+  ADD UNIQUE KEY `name` (`name`,`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables

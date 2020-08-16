@@ -93,25 +93,25 @@ class Accounts implements ApiCore
      */
     public function register($request)
     {
-        $is_missing_param = Utils::missingParams($request->params(), ['username', 'password', 'email']);
+        $is_missing_param = Utils::missingParams($request->params(), ['name', 'password', 'email']);
         if ($is_missing_param) {
             return $is_missing_param;
         }
 
-        $username = $request->param("username");
+        $name = $request->param("name");
         $password = $request->param("password");
         $email = $request->param("email");
 
         $stmt_insert_user = $this->pdo->prepare(/** @lang SQL */ "
-            INSERT INTO users (username, email, password, api_key, ip_address)
+            INSERT INTO users (name, email, password, api_key, ip_address)
             VALUES (?, ?, ?, ?, ?)
         ");
 
         $success = $stmt_insert_user->execute([
-            $username,
+            $name,
             $email,
             password_hash($password, PASSWORD_DEFAULT),
-            substr(sha1($username . uniqid()), 0, 20),
+            substr(sha1($name . uniqid()), 0, 20),
             $_SERVER['REMOTE_ADDR'],
         ]);
 
