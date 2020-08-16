@@ -178,22 +178,29 @@ class Api implements ApiCore
         // $parsed_url = parse_url($url);
         // for now though, let's just strip any excess slashes
         $url = chop($url, "/");
+        $url_md5 = md5($url);
 
         $stmt = $this->pdo->prepare("SELECT * FROM urls WHERE md5=?");
-        $stmt->execute([md5($url)]);
+        $stmt->execute([$url_md5]);
         if ($stmt->rowCount()) {
-            return $stmt->fetch()->url_id;
+            $url_id = $stmt->fetch()->url_id;
+            // Update the links_to_url count for this url
+            $stmt = $this->pdo->prepare("UPDATE urls SET links_to_url = links_to_url + 1 WHERE md5=?");
+            $stmt->execute([$url_md5]);
+            return $url_id;
         } else {
             $stmt = $this->pdo->prepare("INSERT INTO urls (url_base64, url_plain, md5) VALUES(?, ?, ?)");
-            $stmt->execute([base64_encode($url), $url, md5($url)]);
+            $stmt->execute([base64_encode($url), $url, $url_md5]);
             return $this->pdo->lastInsertId();
         }
     }
 
+    /**
+     * @param $req
+     * @return bool|string
+     */
     private function deleteLink($req)
     {
-        $accounts = new Accounts($this->pdo);
-
         $is_missing_param = Utils::missingParams($req->params(), ['link_hash_id', 'api_key']);
         if ($is_missing_param) {
             return $is_missing_param;
@@ -201,32 +208,38 @@ class Api implements ApiCore
 
         $api_key = $req->param("api_key");
         $link_hash_id = $req->param("link_hash_id");
-        $user_id = $accounts->getUserIdFromApiKey($api_key);
 
-        if (!$user_id) {
-            return Response::invalidParameters($req->params(), "Invalid API key provided");
-        }
-
-        $stmt_check_url_usage = $this->pdo->prepare("
-            SELECT * FROM links
-            WHERE link_hash_id = ?
-        ");
-
-        $success = $stmt_check_url_usage->execute([$link_hash_id]);
-        if (!$success) {
-            return Response::failure("That link does not exist in the database.");
-        }
-
-        $stmt_delete_link = $this->pdo->prepare("
-            DELETE FROM links
-            WHERE link_hash_id = ?
-        ");
-        $links_success = $stmt_delete_link->execute([$link_hash_id]);
+        // Delete URL if it is only used for one link
         $stmt_delete_url = $this->pdo->prepare("
-            DELETE FROM urls
-            WHERE link_hash_id = ?
+            DELETE urls FROM urls
+            INNER JOIN links
+            ON urls.url_id = links.url_id
+            WHERE links.link_hash_id = ? AND urls.links_to_url = 1
         ");
-        $url_success = $stmt_delete_url->execute([$link_hash_id]);
+
+        $success = $stmt_delete_url->execute([$link_hash_id]);
+        if (!$success) {
+            return Response::failure("Failed to delete corresponding URL.");
+        }
+
+        // Url deleted successfully.
+
+        $stmt_get_link = $this->pdo->prepare(/** @lang SQL */"
+            DELETE links
+            FROM links
+            INNER JOIN users
+            ON links.user_id = users.user_id
+            WHERE links.link_hash_id = ? AND users.api_key = ?
+        ");
+
+        $success = $stmt_get_link->execute([$link_hash_id, $api_key]);
+        if (!$success) {
+            return Response::failure("Link does not exist or you do not have permissions to delete it.");
+        }
+
+        // Link deleted successfully.
+
+        return Response::success("Link deleted successfully.");
     }
 
     private function compareUrls(string $url_1, string $url_2)

@@ -8,41 +8,41 @@ class Response
 {
     /**
      * @param $success
-     * @param string $msg
+     * @param string $message
      * @return string
      */
-    static function status($success, $msg = ''): string
+    static function status(bool $success, string $message=''): string
     {
-        return json_encode(['success' => $success, 'message' => $msg]);
+        return json_encode(['success' => $success, 'message' => $message]);
     }
 
     /**
-     * @param string $msg
+     * @param string $message
      * @return string
      */
-    static function success($msg = ''): string
+    static function success(string $message=''): string
     {
-        return self::status(true, $msg);
+        return self::status(true, $message);
     }
 
     /**
-     * @param string $msg
+     * @param string $message
      * @return string
      */
-    static function failure($msg = ''): string
+    static function failure(string $message=''): string
     {
-        return self::status(false, $msg);
+        return self::status(false, $message);
     }
 
     /**
-     * @param $success
-     * @param $arr
+     * @param string $success
+     * @param array $data
      * @return string
      */
-    static function message($success, $arr): string
+    static function message(string $success, array $data): string
     {
-        $arr['success'] = $success;
-        return json_encode($arr);
+        $data['success'] = $success;
+        return json_encode($data);
     }
 
 
@@ -70,11 +70,11 @@ class Response
     }
 
     /**
-     * @param $response
+     * @param string $json_response
      * @return bool
      */
-    static function isSuccess($response)
+    static function isSuccess(string $json_response)
     {
-        return (bool) json_decode($response)['success'];
+        return (bool) json_decode($json_response)['success'];
     }
 }
