@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 26, 2020 at 08:17 PM
+-- Generation Time: Aug 16, 2020 at 03:00 AM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.3
 
@@ -29,9 +29,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `links` (
+  `link_hash_id` varchar(16) NOT NULL,
   `url_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `short_slug` varchar(16) NOT NULL,
+  `visits` int(11) NOT NULL DEFAULT '0',
   `does_expire` tinyint(1) NOT NULL DEFAULT '1',
   `expiry_date` datetime DEFAULT NULL,
   `date_added` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -46,6 +47,8 @@ CREATE TABLE `links` (
 CREATE TABLE `urls` (
   `url_id` int(11) NOT NULL,
   `url_base64` text NOT NULL,
+  `url_plain` text NOT NULL,
+  `links_to_url` int(11) NOT NULL DEFAULT '1',
   `md5` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -59,11 +62,20 @@ CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `password` text NOT NULL,
+  `api_key` varchar(20) NOT NULL,
   `last_active` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_joined` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `links_created` int(11) NOT NULL,
+  `links_created` int(11) NOT NULL DEFAULT '0',
   `ip_address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `api_key`, `last_active`, `date_joined`, `links_created`, `ip_address`) VALUES
+(1, 'anonymous', 'none', '', 'anonymous', '2020-08-11 02:55:01', '2020-08-11 02:55:01', 0, '127.0.0.1');
 
 --
 -- Indexes for dumped tables
@@ -73,8 +85,7 @@ CREATE TABLE `users` (
 -- Indexes for table `links`
 --
 ALTER TABLE `links`
-  ADD PRIMARY KEY (`url_id`),
-  ADD UNIQUE KEY `short_slug` (`short_slug`);
+  ADD PRIMARY KEY (`link_hash_id`) USING BTREE;
 
 --
 -- Indexes for table `urls`
@@ -87,7 +98,8 @@ ALTER TABLE `urls`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `username` (`username`,`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -103,7 +115,7 @@ ALTER TABLE `urls`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

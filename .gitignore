@@ -1,6 +1,7 @@
 composer.phar
 /vendor/
 .idea/
+.ignore/
 
 prepros*
 src/.sass-cache
