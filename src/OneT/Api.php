@@ -81,7 +81,7 @@ class Api implements ApiCore
             $url .= strpos($url, "?") ? "&" : "?";
             $url .= $req->server()->REDIRECT_QUERY_STRING;
         }
-        return $resp->redirect($url, $code = 200);
+        return $resp->redirect($url, $code = 302);
     }
 
     /**
